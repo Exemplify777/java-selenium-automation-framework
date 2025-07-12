@@ -458,8 +458,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For support and questions:
-- 📧 Email: automation-team@example.com
-- 💬 Slack: #automation-framework
 - 🐛 Issues: [GitHub Issues](https://github.com/Exemplify777/java-selenium-automation-framework/issues)
 
 ---
