@@ -1,0 +1,99 @@
+# Git
+.git
+.gitignore
+.github
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Maven
+target/
+!target/classes
+!target/test-classes
+
+# Logs
+*.log
+logs/
+
+# Test outputs
+screenshots/
+reports/
+allure-results/
+allure-report/
+test-output/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Environment files
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Docker files (to avoid recursive copying)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Scripts (except those needed in container)
+scripts/
+*.sh
+
+# Configuration files that shouldn't be in container
+.editorconfig
+.gitattributes
+
+# Coverage reports
+jacoco.exec
+*.exec
+
+# Checkstyle cache
+.checkstyle-cache
+
+# PMD
+.pmd
+
+# SpotBugs
+.spotbugs
+
+# SonarQube
+.sonar/
+
+# Node modules (if any)
+node_modules/
+
+# Python files (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Backup files
+*.bak
+*.backup

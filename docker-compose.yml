@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+  # Selenium Hub
+  selenium-hub:
+    image: selenium/hub:4.15.0
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+      - "4442:4442"
+      - "4443:4443"
+    environment:
+      - GRID_MAX_SESSION=16
+      - GRID_BROWSER_TIMEOUT=300
+      - GRID_TIMEOUT=300
+    networks:
+      - selenium-grid
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Chrome Node
+  chrome-node:
+    image: selenium/node-chrome:4.15.0
+    container_name: chrome-node
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+      - NODE_MAX_INSTANCES=4
+      - NODE_MAX_SESSION=4
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      - selenium-grid
+    scale: 2
+
+  # Firefox Node
+  firefox-node:
+    image: selenium/node-firefox:4.15.0
+    container_name: firefox-node
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+      - NODE_MAX_INSTANCES=4
+      - NODE_MAX_SESSION=4
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      - selenium-grid
+    scale: 2
+
+  # Edge Node
+  edge-node:
+    image: selenium/node-edge:4.15.0
+    container_name: edge-node
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+      - NODE_MAX_INSTANCES=4
+      - NODE_MAX_SESSION=4
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      - selenium-grid
+
+  # Test Automation Framework
+  test-automation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: test-automation
+    depends_on:
+      - selenium-hub
+      - chrome-node
+      - firefox-node
+    environment:
+      - ENVIRONMENT=staging
+      - BROWSER=chrome
+      - HEADLESS=true
+      - GRID_ENABLED=true
+      - GRID_HUB_URL=http://selenium-hub:4444/wd/hub
+      - PARALLEL_TESTS=true
+      - THREAD_COUNT=4
+    volumes:
+      - ./target/reports:/app/target/reports
+      - ./target/screenshots:/app/target/screenshots
+      - ./target/allure-results:/app/target/allure-results
+      - ./logs:/app/logs
+    networks:
+      - selenium-grid
+    command: >
+      sh -c "
+        echo 'Waiting for Selenium Hub to be ready...' &&
+        while ! curl -f http://selenium-hub:4444/wd/hub/status; do
+          sleep 5
+        done &&
+        echo 'Selenium Hub is ready. Starting tests...' &&
+        mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-parallel.xml
+      "
+
+  # Report Server (Optional - for serving test reports)
+  report-server:
+    image: nginx:alpine
+    container_name: report-server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./target/reports:/usr/share/nginx/html/reports:ro
+      - ./target/allure-results:/usr/share/nginx/html/allure-results:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - selenium-grid
+    depends_on:
+      - test-automation
+
+networks:
+  selenium-grid:
+    driver: bridge
+
+volumes:
+  test-reports:
+  test-screenshots:
+  allure-results:

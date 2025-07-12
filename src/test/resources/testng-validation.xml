@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Framework Validation Suite" 
+       parallel="none" 
+       thread-count="1" 
+       verbose="2">
+    
+    <!-- Suite-level parameters -->
+    <parameter name="environment" value="dev"/>
+    <parameter name="browser" value="chrome"/>
+    <parameter name="headless" value="true"/>
+    
+    <!-- Listeners -->
+    <listeners>
+        <listener class-name="com.automation.utils.TestListener"/>
+    </listeners>
+    
+    <!-- Framework Validation Tests -->
+    <test name="Framework Validation Tests" 
+          parallel="none" 
+          thread-count="1"
+          preserve-order="true">
+        
+        <groups>
+            <run>
+                <include name="framework"/>
+                <include name="validation"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.automation.tests.FrameworkValidationTest"/>
+        </classes>
+    </test>
+    
+</suite>

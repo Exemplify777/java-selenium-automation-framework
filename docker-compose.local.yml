@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Local Test Execution (without Selenium Grid)
+  test-automation-local:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: test-automation-local
+    environment:
+      - ENVIRONMENT=dev
+      - BROWSER=chrome
+      - HEADLESS=true
+      - GRID_ENABLED=false
+      - PARALLEL_TESTS=false
+      - THREAD_COUNT=1
+    volumes:
+      - ./target/reports:/app/target/reports
+      - ./target/screenshots:/app/target/screenshots
+      - ./target/allure-results:/app/target/allure-results
+      - ./logs:/app/logs
+      - ./src/test/resources/testdata:/app/src/test/resources/testdata
+    command: mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-smoke.xml
+
+  # Standalone Chrome for debugging
+  chrome-debug:
+    image: selenium/standalone-chrome-debug:4.15.0
+    container_name: chrome-debug
+    ports:
+      - "4444:4444"
+      - "5900:5900"  # VNC port for debugging
+    environment:
+      - VNC_NO_PASSWORD=1
+    volumes:
+      - /dev/shm:/dev/shm
+
+  # Test execution with standalone Chrome
+  test-with-chrome:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: test-with-chrome
+    depends_on:
+      - chrome-debug
+    environment:
+      - ENVIRONMENT=dev
+      - BROWSER=chrome
+      - HEADLESS=false
+      - GRID_ENABLED=true
+      - GRID_HUB_URL=http://chrome-debug:4444/wd/hub
+    volumes:
+      - ./target/reports:/app/target/reports
+      - ./target/screenshots:/app/target/screenshots
+      - ./target/allure-results:/app/target/allure-results
+      - ./logs:/app/logs
+    command: >
+      sh -c "
+        echo 'Waiting for Chrome to be ready...' &&
+        while ! curl -f http://chrome-debug:4444/wd/hub/status; do
+          sleep 5
+        done &&
+        echo 'Chrome is ready. Starting tests...' &&
+        mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-smoke.xml
+      "
+
+volumes:
+  local-reports:
+  local-screenshots:
+  local-allure-results:

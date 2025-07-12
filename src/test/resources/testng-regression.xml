@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Regression Test Suite" 
+       parallel="classes" 
+       thread-count="3" 
+       data-provider-thread-count="2"
+       verbose="2"
+       configfailurepolicy="continue">
+    
+    <!-- Suite-level parameters for regression tests -->
+    <parameter name="environment" value="staging"/>
+    <parameter name="browser" value="chrome"/>
+    <parameter name="headless" value="true"/>
+    
+    <!-- Listeners -->
+    <listeners>
+        <listener class-name="com.automation.utils.TestListener"/>
+    </listeners>
+    
+    <!-- Comprehensive Regression Tests -->
+    <test name="Regression Tests" 
+          parallel="classes" 
+          thread-count="3"
+          preserve-order="false">
+        
+        <groups>
+            <run>
+                <include name="positive"/>
+                <include name="negative"/>
+                <include name="functionality"/>
+                <include name="datadriven"/>
+                <include name="validation"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.automation.tests.LoginTest"/>
+            <!-- Add more test classes here for comprehensive regression -->
+        </classes>
+    </test>
+    
+</suite>

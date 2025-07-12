@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Smoke Test Suite" 
+       parallel="none" 
+       thread-count="1" 
+       verbose="2">
+    
+    <!-- Suite-level parameters for smoke tests -->
+    <parameter name="environment" value="prod"/>
+    <parameter name="browser" value="chrome"/>
+    <parameter name="headless" value="true"/>
+    
+    <!-- Listeners -->
+    <listeners>
+        <listener class-name="com.automation.utils.TestListener"/>
+    </listeners>
+    
+    <!-- Smoke Tests - Critical functionality only -->
+    <test name="Smoke Tests" 
+          parallel="none" 
+          thread-count="1"
+          preserve-order="true">
+        
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.automation.tests.LoginTest">
+                <methods>
+                    <include name="testSuccessfulLogin"/>
+                    <include name="testLoginPageUIElements"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+</suite>

@@ -1,0 +1,197 @@
+name: Selenium Test Automation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke
+          - regression
+          - parallel
+          - all
+      browser:
+        description: 'Browser to test'
+        required: true
+        default: 'chrome'
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - edge
+      environment:
+        description: 'Environment to test'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+        test-suite: [smoke, regression]
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    - name: Install Chrome
+      if: matrix.browser == 'chrome'
+      uses: browser-actions/setup-chrome@latest
+      with:
+        chrome-version: stable
+        
+    - name: Install Firefox
+      if: matrix.browser == 'firefox'
+      uses: browser-actions/setup-firefox@latest
+      with:
+        firefox-version: latest
+        
+    - name: Install Edge
+      if: matrix.browser == 'edge'
+      uses: browser-actions/setup-edge@latest
+      with:
+        edge-version: stable
+        
+    - name: Verify Maven installation
+      run: mvn --version
+      
+    - name: Compile project
+      run: mvn clean compile
+      
+    - name: Run Checkstyle
+      run: mvn checkstyle:check
+      continue-on-error: true
+      
+    - name: Run Smoke Tests
+      if: matrix.test-suite == 'smoke' || github.event.inputs.test_suite == 'smoke'
+      run: |
+        mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-smoke.xml \
+                 -Denvironment=${{ github.event.inputs.environment || 'staging' }} \
+                 -Dbrowser=${{ matrix.browser }} \
+                 -Dheadless=true
+      continue-on-error: true
+      
+    - name: Run Regression Tests
+      if: matrix.test-suite == 'regression' || github.event.inputs.test_suite == 'regression'
+      run: |
+        mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-regression.xml \
+                 -Denvironment=${{ github.event.inputs.environment || 'staging' }} \
+                 -Dbrowser=${{ matrix.browser }} \
+                 -Dheadless=true
+      continue-on-error: true
+      
+    - name: Run Parallel Tests
+      if: github.event.inputs.test_suite == 'parallel'
+      run: |
+        mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng-parallel.xml \
+                 -Denvironment=${{ github.event.inputs.environment || 'staging' }} \
+                 -Dbrowser=${{ matrix.browser }} \
+                 -Dheadless=true
+      continue-on-error: true
+      
+    - name: Run All Tests
+      if: github.event.inputs.test_suite == 'all'
+      run: |
+        mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml \
+                 -Denvironment=${{ github.event.inputs.environment || 'staging' }} \
+                 -Dbrowser=${{ matrix.browser }} \
+                 -Dheadless=true
+      continue-on-error: true
+      
+    - name: Generate Allure Report
+      if: always()
+      run: mvn allure:report
+      continue-on-error: true
+      
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.browser }}-${{ matrix.test-suite }}
+        path: |
+          target/surefire-reports/
+          target/reports/
+          target/screenshots/
+          target/allure-results/
+          target/site/allure-maven-plugin/
+        retention-days: 30
+        
+    - name: Upload Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: screenshots-${{ matrix.browser }}-${{ matrix.test-suite }}
+        path: target/screenshots/
+        retention-days: 7
+        
+    - name: Publish Test Results
+      if: always()
+      uses: dorny/test-reporter@v1
+      with:
+        name: Test Results (${{ matrix.browser }}-${{ matrix.test-suite }})
+        path: target/surefire-reports/*.xml
+        reporter: java-junit
+        fail-on-error: false
+        
+  notify:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify on Success
+      if: needs.test.result == 'success'
+      run: |
+        echo "✅ All tests passed successfully!"
+        
+    - name: Notify on Failure
+      if: needs.test.result == 'failure'
+      run: |
+        echo "❌ Some tests failed. Check the artifacts for details."
+        
+    - name: Send Slack Notification
+      if: always() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ needs.test.result }}
+        channel: '#automation-alerts'
+        text: |
+          Test Automation Results:
+          Status: ${{ needs.test.result }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          Author: ${{ github.actor }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      continue-on-error: true

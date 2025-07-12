@@ -1,0 +1,106 @@
+{
+  "validUsers": [
+    {
+      "username": "admin",
+      "password": "admin123",
+      "email": "admin@example.com",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "administrator",
+      "isActive": true
+    },
+    {
+      "username": "testuser1",
+      "password": "password123",
+      "email": "testuser1@example.com",
+      "firstName": "Test",
+      "lastName": "User One",
+      "role": "user",
+      "isActive": true
+    },
+    {
+      "username": "testuser2",
+      "password": "password456",
+      "email": "testuser2@example.com",
+      "firstName": "Test",
+      "lastName": "User Two",
+      "role": "user",
+      "isActive": true
+    }
+  ],
+  "invalidUsers": [
+    {
+      "username": "invaliduser",
+      "password": "wrongpassword",
+      "email": "invalid@example.com",
+      "firstName": "Invalid",
+      "lastName": "User",
+      "role": "user",
+      "isActive": false
+    },
+    {
+      "username": "",
+      "password": "",
+      "email": "",
+      "firstName": "",
+      "lastName": "",
+      "role": "",
+      "isActive": false
+    }
+  ],
+  "testCredentials": {
+    "admin": {
+      "username": "admin",
+      "password": "admin123"
+    },
+    "user": {
+      "username": "testuser1",
+      "password": "password123"
+    },
+    "guest": {
+      "username": "guest",
+      "password": "guest123"
+    }
+  },
+  "apiEndpoints": {
+    "login": "/api/auth/login",
+    "logout": "/api/auth/logout",
+    "users": "/api/users",
+    "profile": "/api/user/profile"
+  },
+  "testData": {
+    "searchTerms": [
+      "selenium",
+      "automation",
+      "testing",
+      "java",
+      "framework"
+    ],
+    "productCategories": [
+      "Electronics",
+      "Books",
+      "Clothing",
+      "Home & Garden",
+      "Sports"
+    ],
+    "countries": [
+      "United States",
+      "Canada",
+      "United Kingdom",
+      "Germany",
+      "France",
+      "Australia",
+      "Japan"
+    ]
+  },
+  "configuration": {
+    "timeouts": {
+      "short": 5,
+      "medium": 15,
+      "long": 30
+    },
+    "retryAttempts": 3,
+    "defaultLanguage": "en",
+    "defaultCurrency": "USD"
+  }
+}

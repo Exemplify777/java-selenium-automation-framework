@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Exclude test files from certain checks -->
+    <Match>
+        <Class name="~.*Test.*"/>
+        <Bug pattern="DM_EXIT"/>
+    </Match>
+
+    <!-- Exclude utility classes from certain checks -->
+    <Match>
+        <Class name="~.*Utils.*"/>
+        <Bug pattern="UUF_UNUSED_FIELD"/>
+    </Match>
+
+    <!-- Exclude page objects from certain checks -->
+    <Match>
+        <Class name="~.*Page.*"/>
+        <Bug pattern="URF_UNREAD_FIELD"/>
+    </Match>
+
+    <!-- Exclude configuration classes -->
+    <Match>
+        <Class name="~.*Config.*"/>
+        <Bug pattern="MS_SHOULD_BE_FINAL"/>
+    </Match>
+
+    <!-- Exclude WebDriver related issues -->
+    <Match>
+        <Class name="~.*Driver.*"/>
+        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+    </Match>
+
+    <!-- Exclude serialization warnings for test data classes -->
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+
+    <!-- Exclude null pointer warnings for WebElements (handled by WebDriver) -->
+    <Match>
+        <Bug pattern="NP_UNWRITTEN_FIELD"/>
+        <Field type="org.openqa.selenium.WebElement"/>
+    </Match>
+
+    <!-- Exclude unused private method warnings for test helper methods -->
+    <Match>
+        <Class name="~.*Test.*"/>
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+    </Match>
+
+    <!-- Exclude hardcoded string warnings for test data -->
+    <Match>
+        <Class name="~.*Test.*"/>
+        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+    </Match>
+
+    <!-- Exclude target directory -->
+    <Match>
+        <Class name="~.*target.*"/>
+    </Match>
+
+    <!-- Exclude generated classes -->
+    <Match>
+        <Class name="~.*generated.*"/>
+    </Match>
+</FindBugsFilter>

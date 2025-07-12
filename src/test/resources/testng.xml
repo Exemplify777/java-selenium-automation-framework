@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Selenium Automation Test Suite" 
+       parallel="methods" 
+       thread-count="3" 
+       data-provider-thread-count="2"
+       verbose="2">
+    
+    <!-- Suite-level parameters -->
+    <parameter name="environment" value="dev"/>
+    <parameter name="browser" value="chrome"/>
+    <parameter name="headless" value="false"/>
+    
+    <!-- Listeners -->
+    <listeners>
+        <listener class-name="com.automation.utils.TestListener"/>
+    </listeners>
+    
+    <!-- Test groups definition -->
+    <groups>
+        <run>
+            <include name="smoke"/>
+            <include name="login"/>
+            <include name="positive"/>
+            <include name="negative"/>
+        </run>
+    </groups>
+    
+    <!-- Smoke Test Suite -->
+    <test name="Smoke Tests" 
+          parallel="methods" 
+          thread-count="2"
+          preserve-order="false">
+        
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.automation.tests.LoginTest">
+                <methods>
+                    <include name="testSuccessfulLogin"/>
+                    <include name="testLoginPageUIElements"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Login Test Suite -->
+    <test name="Login Tests" 
+          parallel="methods" 
+          thread-count="3"
+          preserve-order="false">
+        
+        <groups>
+            <run>
+                <include name="login"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.automation.tests.LoginTest"/>
+        </classes>
+    </test>
+    
+    <!-- Regression Test Suite -->
+    <test name="Regression Tests" 
+          parallel="classes" 
+          thread-count="2"
+          preserve-order="false">
+        
+        <groups>
+            <run>
+                <include name="positive"/>
+                <include name="negative"/>
+                <include name="functionality"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.automation.tests.LoginTest"/>
+            <!-- Add more test classes here as they are created -->
+        </classes>
+    </test>
+    
+    <!-- Performance Test Suite -->
+    <test name="Performance Tests" 
+          parallel="none" 
+          thread-count="1"
+          preserve-order="true">
+        
+        <groups>
+            <run>
+                <include name="performance"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.automation.tests.LoginTest">
+                <methods>
+                    <include name="testLoginPerformance"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Data-Driven Test Suite -->
+    <test name="Data-Driven Tests" 
+          parallel="methods" 
+          thread-count="2"
+          preserve-order="false">
+        
+        <groups>
+            <run>
+                <include name="datadriven"/>
+            </run>
+        </groups>
+        
+        <classes>
+            <class name="com.automation.tests.LoginTest">
+                <methods>
+                    <include name="testLoginWithMultipleCredentials"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+</suite>

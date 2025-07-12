@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Parallel Execution Test Suite" 
+       parallel="methods" 
+       thread-count="5" 
+       data-provider-thread-count="3"
+       verbose="2"
+       configfailurepolicy="continue">
+    
+    <!-- Suite-level parameters for parallel execution -->
+    <parameter name="environment" value="staging"/>
+    <parameter name="browser" value="chrome"/>
+    <parameter name="headless" value="true"/>
+    <parameter name="parallel.tests" value="true"/>
+    <parameter name="thread.count" value="5"/>
+    
+    <!-- Listeners -->
+    <listeners>
+        <listener class-name="com.automation.utils.TestListener"/>
+    </listeners>
+    
+    <!-- All Tests with Maximum Parallelism -->
+    <test name="Parallel Test Execution" 
+          parallel="methods" 
+          thread-count="5"
+          preserve-order="false">
+        
+        <classes>
+            <class name="com.automation.tests.LoginTest"/>
+            <!-- Add more test classes here -->
+        </classes>
+    </test>
+    
+</suite>

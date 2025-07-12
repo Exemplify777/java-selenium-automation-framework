@@ -1,0 +1,21 @@
+id,name,category,price,description,inStock,rating
+1,Laptop Computer,Electronics,999.99,High-performance laptop for work and gaming,true,4.5
+2,Wireless Mouse,Electronics,29.99,Ergonomic wireless mouse with long battery life,true,4.2
+3,Programming Book,Books,49.99,Comprehensive guide to software development,true,4.8
+4,T-Shirt,Clothing,19.99,Comfortable cotton t-shirt in various colors,true,4.0
+5,Garden Tools Set,Home & Garden,79.99,Complete set of essential gardening tools,true,4.3
+6,Running Shoes,Sports,129.99,Lightweight running shoes for all terrains,false,4.6
+7,Smartphone,Electronics,699.99,Latest smartphone with advanced camera features,true,4.4
+8,Cookbook,Books,24.99,Collection of healthy and delicious recipes,true,4.1
+9,Jeans,Clothing,59.99,Classic denim jeans in multiple sizes,true,4.2
+10,Lawn Mower,Home & Garden,299.99,Electric lawn mower for small to medium yards,true,4.0
+11,Tennis Racket,Sports,89.99,Professional-grade tennis racket for all skill levels,true,4.5
+12,Tablet,Electronics,399.99,Portable tablet perfect for reading and entertainment,true,4.3
+13,Mystery Novel,Books,14.99,Thrilling mystery novel by bestselling author,true,4.7
+14,Sweater,Clothing,39.99,Warm wool sweater for cold weather,false,4.1
+15,Plant Pot,Home & Garden,12.99,Decorative ceramic pot for indoor plants,true,3.9
+16,Basketball,Sports,24.99,Official size basketball for indoor and outdoor play,true,4.4
+17,Headphones,Electronics,149.99,Noise-canceling headphones with premium sound quality,true,4.6
+18,Science Fiction Book,Books,16.99,Epic space adventure in a distant galaxy,true,4.5
+19,Dress Shirt,Clothing,34.99,Professional dress shirt for business occasions,true,4.0
+20,Watering Can,Home & Garden,18.99,Durable watering can with ergonomic handle,true,4.2
