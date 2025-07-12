@@ -27,7 +27,7 @@
         <slf4j.version>2.0.9</slf4j.version>
         <logback.version>1.4.14</logback.version>
         <jackson.version>2.16.0</jackson.version>
-        <apache.poi.version>5.2.5</apache.poi.version>
+        <apache.poi.version>5.4.0</apache.poi.version>
         <opencsv.version>5.9</opencsv.version>
         <allure.version>2.24.0</allure.version>
         <maven.surefire.version>3.2.2</maven.surefire.version>
